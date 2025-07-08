@@ -5,7 +5,7 @@ import os
 import traceback
 
 app = Flask(__name__)
-CORS(app)
+CORS(app)  # <-- this was out of place in your requirements
 
 openai.api_key = os.environ.get("OPENAI_API_KEY")
 
