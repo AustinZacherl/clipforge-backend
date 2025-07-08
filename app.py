@@ -19,15 +19,15 @@ def generate_title():
         if not video_description:
             return jsonify({"error": "Description is required"}), 400
 
-        response = openai.chat.completions.create(
-            model="gpt-4",
-            messages=[
-                {"role": "system", "content": "You are a YouTube title generator."},
-                {"role": "user", "content": f"Create a viral YouTube title for this video: {video_description}"}
-            ],
-            max_tokens=30,
-            temperature=0.8,
-        )
+        response = openai.ChatCompletion.create(
+    model="gpt-3.5-turbo",
+    messages=[
+        {"role": "system", "content": "You are a YouTube title generator."},
+        {"role": "user", "content": f"Create a viral YouTube title for this video: {video_description}"}
+    ],
+    max_tokens=30,
+    temperature=0.8,
+)
 
         title = response.choices[0].message.content.strip()
         return jsonify({"title": title})
