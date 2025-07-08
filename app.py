@@ -1,14 +1,12 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import openai
-import os
-import traceback
+from transformers import pipeline
 
 app = Flask(__name__)
 CORS(app)
 
-# Set your OpenAI API key from environment variable
-openai.api_key = os.environ.get("OPENAI_API_KEY")
+# Load GPT-2 model pipeline once at startup (takes a few seconds)
+generator = pipeline('text-generation', model='gpt2')
 
 @app.route("/generate-title", methods=["POST"])
 def generate_title():
@@ -19,22 +17,16 @@ def generate_title():
         if not video_description:
             return jsonify({"error": "Description is required"}), 400
 
-        response = openai.ChatCompletion.create(
-    model="gpt-3.5-turbo",
-    messages=[
-        {"role": "system", "content": "You are a YouTube title generator."},
-        {"role": "user", "content": f"Create a viral YouTube title for this video: {video_description}"}
-    ],
-    max_tokens=30,
-    temperature=0.8,
-)
+        prompt = f"Generate a catchy YouTube video title for: {video_description}"
+        results = generator(prompt, max_length=30, num_return_sequences=1)
+        title = results[0]['generated_text']
 
-        title = response.choices[0].message.content.strip()
+        # Clean up the title text a bit (remove prompt from generated text)
+        title = title.replace(prompt, '').strip()
         return jsonify({"title": title})
 
     except Exception as e:
-        traceback.print_exc()
         return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
-    app.run(debug=False)
+    app.run(debug=True)
