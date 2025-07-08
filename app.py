@@ -5,8 +5,9 @@ import os
 import traceback
 
 app = Flask(__name__)
-CORS(app)  # <-- this was out of place in your requirements
+CORS(app)  # ← This was out of place in your version
 
+# Set OpenAI API key from environment variable
 openai.api_key = os.environ.get("OPENAI_API_KEY")
 
 @app.route("/generate-title", methods=["POST"])
