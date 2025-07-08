@@ -11,13 +11,13 @@ openai.api_key = os.environ.get("OPENAI_API_KEY")
 
 @app.route("/generate-title", methods=["POST"])
 def generate_title():
-    data = request.get_json()
-    video_description = data.get("description")
-
-    if not video_description:
-        return jsonify({"error": "Description is required"}), 400
-
     try:
+        data = request.get_json()
+        video_description = data.get("description")
+
+        if not video_description:
+            return jsonify({"error": "Description is required"}), 400
+
         response = openai.ChatCompletion.create(
             model="gpt-4",
             messages=[
@@ -27,6 +27,7 @@ def generate_title():
             max_tokens=30,
             temperature=0.8,
         )
+
         title = response["choices"][0]["message"]["content"].strip()
         return jsonify({"title": title})
 
