@@ -1,3 +1,15 @@
+from flask import Flask, request, jsonify
+from flask_cors import CORS
+import openai
+import os
+import traceback
+
+app = Flask(__name__)
+CORS(app)
+
+# Set your OpenAI API key from environment variable
+openai.api_key = os.environ.get("OPENAI_API_KEY")
+
 @app.route("/generate-title", methods=["POST"])
 def generate_title():
     try:
@@ -21,7 +33,8 @@ def generate_title():
         return jsonify({"title": title})
 
     except Exception as e:
-        import traceback
         traceback.print_exc()
         return jsonify({"error": str(e)}), 500
 
+if __name__ == "__main__":
+    app.run(debug=False)
