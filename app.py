@@ -1,28 +1,23 @@
 from flask import Flask, request, jsonify
-import openai
-import os
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
-# Set your OpenAI key here or use environment variable
-openai.api_key = os.getenv("OPENAI_API_KEY")
-
-@app.route("/title", methods=["POST"])
+@app.route('/generate-title', methods=['POST'])
 def generate_title():
-    data = request.json
-    transcript = data.get("transcript", "")
+    data = request.get_json()
+    input_text = data.get('input_text', '')
 
-    if not transcript:
-        return jsonify({"error": "No transcript provided"}), 400
+    # Simple example logic — you can plug in real AI later
+    if not input_text:
+        return jsonify({'title': 'No input provided'}), 400
 
-    response = openai.ChatCompletion.create(
-        model="gpt-4o",
-        messages=[
-            {"role": "user", "content": f"Write a viral YouTube video title based on this: {transcript}"}
-        ]
-    )
+    generated_title = f"Epic Clip: {input_text[:40]}..."
 
-    return jsonify({"title": response.choices[0].message.content.strip()})
+    return jsonify({'title': generated_title})
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+@app.route('/')
+def home():
+    return "ClipForge AI Backend is running."
+
