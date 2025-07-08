@@ -35,3 +35,8 @@ def generate_title():
 
 if __name__ == "__main__":
     app.run(debug=False)
+        except Exception as e:
+        import traceback
+        traceback.print_exc()  # <-- Add this line
+        return jsonify({"error": str(e)}), 500
+
